@@ -1,0 +1,27 @@
+{
+  "name": "vue-course-materials",
+  "version": "6.0.0",
+  "description": "Материалы вебинаров курса по Vue на https://learn.javascript.ru/courses/vue",
+  "type": "module",
+  "license": "UNLICENSED",
+  "author": "Grigorii K. Shartsev <me@shgk.me>",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@shgk/vue-course-ui": "^6.0.0-rc.5",
+    "@vueuse/core": "^10.11.0",
+    "dequal": "^2.0.3",
+    "klona": "^2.0.6",
+    "pinia": "^2.1.7",
+    "vue": "^3.4.31",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@shgk/vue-course-taskbook": "^6.0.0-rc.1",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3"
+  },
+  "private": true
+}
