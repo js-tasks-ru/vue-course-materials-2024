@@ -1,0 +1,9 @@
+{
+  "extends": "@shgk/vue-course-taskbook/configs/tsconfig.json",
+  "include": ["env.d.ts", "**/*", "**/*.vue"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "allowJs": true,
+  }
+}
