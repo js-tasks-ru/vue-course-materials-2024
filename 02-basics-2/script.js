@@ -1,12 +1,64 @@
 import '@shgk/vue-course-ui/meetups/style.css'
-import meetupsJson from './api/meetups.json'
-import { defineComponent, createApp } from 'vue/dist/vue.esm-browser.js'
+import { defineComponent, createApp, ref, computed, onMounted } from 'vue/dist/vue.esm-browser.js'
+
+async function fetchMeetups() {
+  const response = await fetch('https://course-vue.javascript.ru/api/meetups')
+  const result = await response.json()
+  if (!response.ok) {
+    throw new Error(result.message)
+  }
+  return result
+}
 
 const App = defineComponent({
   name: 'App',
 
   setup() {
-    const meetups = meetupsJson
+    // Всё состояние приложения (на сколько возможно) - должно быть описано как состояние Vue приложения
+    // В противном случае будут части DOM, изменяющиеся неконтролируемо
+    const view = ref('list')
+    const filters = ref({
+      date: 'all',
+      participation: 'all',
+      query: '',
+    })
+
+    // Начальным значением лучше указывать null, а не пустой массив [] чтобы явно указать на отсутствие данных
+    const meetups = ref(null)
+
+    // Отфильтрованные митапы - это результат вычисления от других данных
+    // С вычисляемым свойством значение переменной будет обновляться автоматически и только при необходимости
+    const filteredMeetups = computed(() => {
+      const dateFilter = (meetup) =>
+        filters.value.date === 'all' ||
+        (filters.value.date === 'past' && new Date(meetup.date) <= new Date()) ||
+        (filters.value.date === 'future' && new Date(meetup.date) > new Date())
+
+      const participationFilter = (meetup) =>
+        filters.value.participation === 'all' ||
+        (filters.value.participation === 'organizing' && meetup.organizing) ||
+        (filters.value.participation === 'attending' && meetup.attending)
+
+      const searchFilter = (meetup) =>
+        [meetup.title, meetup.description, meetup.place, meetup.organizer]
+          .join(' ')
+          .toLowerCase()
+          .includes(filters.value.query.toLowerCase())
+
+      return meetups.value.filter((meetup) => dateFilter(meetup) && participationFilter(meetup) && searchFilter(meetup))
+    })
+
+    // Устанавливаем хук жизненного цикла mounted
+    // Он сработает, когда экземпляр компонента будет создан и затем смонтирован в DOM дерево
+    // Запрашивать данные можно и просто в setup в IIFE или с .then()
+    // Но с onMounted чуть безопаснее - непойманное исключение не сломает setup компонента
+    onMounted(async () => {
+      try {
+        meetups.value = await fetchMeetups()
+      } catch (error) {
+        console.error(error)
+      }
+    })
 
     function formatAsIsoDate(timestamp) {
       return new Date(timestamp).toISOString()
@@ -21,7 +73,10 @@ const App = defineComponent({
     }
 
     return {
+      view,
+      filters,
       meetups,
+      filteredMeetups,
       formatAsIsoDate,
       formatAsLocalDate,
     }
@@ -33,12 +88,16 @@ const App = defineComponent({
         <div class="filters-panel__col">
           <div class="radio-group">
             <div class="radio-group__button">
+              <!-- ref автоматически разворачивается (unwrap) в шаблоне. Писать .value не нужно (и нельзя) -->
+              <!-- v-model - директива двустороннего связывания. Синтаксический сахар для двух других директив. -->
+              <!-- Здесь v-model="filters.date" эквивалентно :checked="filters.date == 'all'" + @input="filters.date = 'all'" -->
               <input
                 id="radio-buttons_date_all"
                 class="radio-group__input"
                 type="radio"
                 name="date"
                 value="all"
+                v-model="filters.date"
               />
               <label for="radio-buttons_date_all" class="radio-group__label">Все</label>
             </div>
@@ -49,6 +108,7 @@ const App = defineComponent({
                 type="radio"
                 name="date"
                 value="past"
+                v-model="filters.date"
               />
               <label for="radio-buttons_date_future" class="radio-group__label">Прошедшие</label>
             </div>
@@ -59,6 +119,7 @@ const App = defineComponent({
                 type="radio"
                 name="date"
                 value="future"
+                v-model="filters.date"
               />
               <label for="radio-buttons_date_past" class="radio-group__label">Ожидаемые</label>
             </div>
@@ -76,22 +137,35 @@ const App = defineComponent({
                   </g>
                 </svg>
               </div>
+              <!-- Модификаторы директивы могут менять работу с значением -->
               <input
                 class="form-control form-control--rounded form-control--sm"
                 aria-label="Поиск"
                 placeholder="Поиск"
                 type="search"
+                v-model.trim="filters.query"
               />
             </div>
           </div>
           <div class="form-group form-group--inline">
             <div class="button-group" role="radiogroup" aria-label="Расположение митапов">
+              <!-- Даже если HTML атрибут ожидает значение "false", оно должно быть строкой. Иначе это "не добавлять атрибут" -->
+              <!-- v-on - директива для обработки событий -->
+              <!-- В общем виде v-on="{ event1: handler, event2: handler }" -->
+              <!-- Конкретное событие указывается через аргумент v-on:click="handler" -->
+              <!-- @event - короткая запись для v-on:event -->
+              <!-- Значением может быть сразу тело функции -->
+              <!-- @click="view = 'list'" эквивалентно @click="() => view = 'list'" -->
+              <!-- через $event в обработчике можно обратиться к объекту события -->
+              <!-- Модификаторы директивы настраивают обработку события, например, .stop - event.stopPropagation() -->
               <button
                 type="button"
-                class="button-group__button button-group__button--active"
+                class="button-group__button"
+                :class="{ 'button-group__button--active': view === 'list' }"
                 role="radio"
                 aria-label="Список"
-                aria-checked="true"
+                :aria-checked="view === 'list' ? 'true' : 'false'"
+                @click="view = 'list'"
               >
                 <svg fill="none" height="28" viewBox="0 0 28 28" width="28" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -104,9 +178,11 @@ const App = defineComponent({
               <button
                 type="button"
                 class="button-group__button"
+                :class="{ 'button-group__button--active': view === 'calendar' }"
                 role="radio"
                 aria-label="Календарь"
-                aria-checked="false"
+                :aria-checked="view === 'calendar' ? 'true' : 'false'"
+                @click="view = 'calendar'"
               >
                 <svg height="22" viewBox="0 0 20 22" width="20" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -121,50 +197,51 @@ const App = defineComponent({
         </div>
       </div>
 
-      <ul class="meetups-list">
-        <li v-for="meetup in meetups" :key="meetup.id" class="meetups-list__item">
-          <a :href="\`/meetups/\${meetup.id}\`" class="meetups-list__item-link" tabindex="0">
-            <article class="meetup-card card">
-              <div class="card__col">
-                <div class="card__cover" :style="meetup.image && { '--bg-url': \`url('\${meetup.image}')\` }">
-                  <header>{{ meetup.title }}</header>
-                </div>
-              </div>
-              <div class="card__col">
-                <div class="card__content">
-                  <span v-if="meetup.organizing" class="meetup-card__badge badge badge--success">Организую</span>
-                  <span v-else-if="meetup.attending" class="meetup-card__badge badge badge--primary">Участвую</span>
-                  <span v-if="false">{{ meetup.notAFunction('Я никогда не буду вызыван') }}</span>
-                  <ul class="meetup-info">
-                    <li class="meetup-info__item">
-                      <img class="meetup-info__icon icon" src="../node_modules/@shgk/vue-course-ui/dist/meetups/assets/icons/icon-user.svg" alt=""/>
-                      {{ meetup.organizer }}
-                    </li>
-                    <li class="meetup-info__item">
-                      <img class="meetup-info__icon icon" src="../node_modules/@shgk/vue-course-ui/dist/meetups/assets/icons/icon-map.svg" alt=""/>
-                      {{ meetup.place }}
-                    </li>
-                    <li class="meetup-info__item">
-                      <img class="meetup-info__icon icon" src="../node_modules/@shgk/vue-course-ui/dist/meetups/assets/icons/icon-cal-lg.svg" alt=""/>
-                      <time :datetime="formatAsIsoDate(meetup.date)">{{ formatAsLocalDate(meetup.date) }}</time>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </article>
-          </a>
-        </li>
-      </ul>
+      <!-- Специальный тег template позволяет оборачивать несколько узлов для директив v-if и v-for -->
+      <template v-if="meetups !== null">
+        <template v-if="filteredMeetups.length">
+          <ul v-if="view === 'list'" class="meetups-list">
+            <li v-for="meetup in filteredMeetups" :key="meetup.id" class="meetups-list__item">
+              <a :href="\`/meetups/\${meetup.id}\`" class="meetups-list__item-link" tabindex="0">
+                <article class="meetup-card card">
+                  <div class="card__col">
+                    <div class="card__cover" :style="meetup.image && { '--bg-url': \`url('\${meetup.image}')\` }">
+                      <header>{{ meetup.title }}</header>
+                    </div>
+                  </div>
+                  <div class="card__col">
+                    <div class="card__content">
+                      <span v-if="meetup.organizing" class="meetup-card__badge badge badge--success">Организую</span>
+                      <span v-else-if="meetup.attending" class="meetup-card__badge badge badge--primary">Участвую</span>
+                      <span v-if="false">{{ meetup.notAFunction('Я никогда не буду вызыван') }}</span>
+                      <ul class="meetup-info">
+                        <li class="meetup-info__item">
+                          <img class="meetup-info__icon icon" src="../node_modules/@shgk/vue-course-ui/dist/meetups/assets/icons/icon-user.svg" alt=""/>
+                          {{ meetup.organizer }}
+                        </li>
+                        <li class="meetup-info__item">
+                          <img class="meetup-info__icon icon" src="../node_modules/@shgk/vue-course-ui/dist/meetups/assets/icons/icon-map.svg" alt=""/>
+                          {{ meetup.place }}
+                        </li>
+                        <li class="meetup-info__item">
+                          <img class="meetup-info__icon icon" src="../node_modules/@shgk/vue-course-ui/dist/meetups/assets/icons/icon-cal-lg.svg" alt=""/>
+                          <time :datetime="formatAsIsoDate(meetup.date)">{{ formatAsLocalDate(meetup.date) }}</time>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </article>
+              </a>
+            </li>
+          </ul>
+          <div v-else-if="view === 'calendar'" class="meetups-calendar">Календарь</div>
+        </template>
+        <div v-else class="alert">Митапов по заданным условиям не найдено...</div>
+      </template>
+      <div v-else class="alert">Загрузка...</div>
 
-      <div class="meetups-calendar">Календарь</div>
-      <div class="alert">Митапов по заданным условиям не найдено...</div>
-      <div class="alert">Загрузка...</div>
     </div>
   `,
 })
 
-const app = createApp(App)
-
-const vm = app.mount('#app')
-
-window.vm = vm
+createApp(App).mount('#app')
