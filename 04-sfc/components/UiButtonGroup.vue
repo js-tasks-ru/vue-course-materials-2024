@@ -1,19 +1,18 @@
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'UiButtonGroup',
-
-  props: {
-    view: {
-      type: String,
-      required: true,
-      validator: (value) => ['list', 'calendar'].includes(value),
-    },
+<script setup>
+const props = defineProps({
+  view: {
+    type: String,
+    required: true,
+    validator: (value) => ['list', 'calendar'].includes(value),
   },
 
-  emits: ['update:view'],
+  color: {
+    type: String,
+    default: 'var(--blue)',
+  },
 })
+
+const emit = defineEmits(['update:view'])
 </script>
 
 <template>
@@ -100,7 +99,7 @@ export default defineComponent({
 
 .button-group__button:hover,
 .button-group__button--active {
-  background-color: var(--blue);
+  background-color: v-bind(color);
   color: var(--white);
 }
 
