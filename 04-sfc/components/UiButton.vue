@@ -1,3 +1,32 @@
+<script>
+const buttonKindClasses = {
+  primary: 'button--primary',
+  secondary: 'button--secondary',
+  danger: 'button--danger',
+}
+</script>
+
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  kind: {
+    type: String,
+    validator: (value) => Object.keys(buttonKindClasses).includes(value),
+    default: 'secondary',
+  },
+})
+
+const kindClass = computed(() => buttonKindClasses[props.kind])
+</script>
+
+<template>
+  <button class="button" :class="kindClass">
+    <slot/>
+  </button>
+</template>
+
+<style scoped>
 .button {
   display: inline-block;
   padding: 10px 24px;
@@ -51,3 +80,4 @@
 .button--danger:hover {
   border-color: var(--red-light);
 }
+</style>
