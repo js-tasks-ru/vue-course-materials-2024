@@ -1,23 +1,26 @@
-<script>
+<script lang="ts">
 import { computed } from 'vue'
+import type { PropType, ComputedRef } from 'vue'
 
 const buttonKindClasses = {
   primary: 'button--primary',
   secondary: 'button--secondary',
   danger: 'button--danger',
-}
+} as const
+
+type ButtonKinds = keyof typeof buttonKindClasses
 
 export default {
   props: {
     kind: {
-      type: String,
-      validator: (value) => Object.keys(buttonKindClasses).includes(value),
+      type: String as PropType<ButtonKinds>,
+      validator: (value: ButtonKinds) => Object.keys(buttonKindClasses).includes(value),
       default: 'secondary',
     },
   },
 
   setup(props) {
-    const kindClass = computed(() => buttonKindClasses[props.kind])
+    const kindClass: ComputedRef<string> = computed(() => buttonKindClasses[props.kind])
 
     return {
       kindClass,
