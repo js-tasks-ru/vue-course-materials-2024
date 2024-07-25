@@ -1,11 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import UiContainer from './components/UiContainer.vue'
 import UiButton from './components/UiButton.vue'
 import UiButtonGroup from './components/UiButtonGroup.vue'
 import UiRadioGroup from './components/UiRadioGroup.vue'
-import { ref } from 'vue'
+import { type Ref, ref } from 'vue'
 
-const view = ref('list')
+const view: Ref<'list' | 'string'> = ref('list')
+// Ref<string>
 const selected = ref('1')
 </script>
 

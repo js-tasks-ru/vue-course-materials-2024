@@ -1,24 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { generateId } from '../utils.ts'
 
-const props = defineProps({
-    modelValue: {
-      type: String,
-      required: true,
-    },
-    options: {
-      type: Array,
-      required: true,
-    },
-    name: {
-      type: String,
-      default: () => `ui-radio-group-${generateId()}`,
-    },
-  })
+export interface UiRadioGroupProps {
+  modelValue: string
+  options: { label: string; value: string }[]
+  name?: string
+}
+
+// const props = withDefaults(defineProps<UiRadioGroupProps>(), {
+//   name: () => `ui-radio-group-${generateId()}`,
+// })
+
+// Vue 3.3+ Experimental, 3.5+ Stable
+const { name = `ui-radio-group-${generateId()}` } = defineProps<UiRadioGroupProps>()
+// name = props.name
 
 const emit = defineEmits(['update:modelValue'])
 
-function handleChange(value) {
+function handleChange(value: string) {
   emit('update:modelValue', value)
 }
 </script>

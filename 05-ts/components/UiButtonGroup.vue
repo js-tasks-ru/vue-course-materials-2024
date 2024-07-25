@@ -1,13 +1,19 @@
-<script setup>
-const props = defineProps({
-  view: {
-    type: String,
-    required: true,
-    validator: (value) => ['list', 'calendar'].includes(value),
-  },
-})
+<script setup lang="ts">
+export type UiButtonProps = {
+  view: 'list' | 'calendar'
+}
 
-const emit = defineEmits(['update:view'])
+const { view = 'list' }  = defineProps<UiButtonProps>()
+
+export type UiButtonEmits = {
+  // Vue 3.2
+  // (event: 'update:view', view: 'list' | 'calendar'): void,
+
+  // Vue 3.3+
+  'update:view': [view: 'list' | 'calendar'],
+}
+
+const emit = defineEmits<UiButtonEmits>()
 </script>
 
 <template>
