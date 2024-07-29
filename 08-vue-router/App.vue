@@ -1,15 +1,13 @@
 <script setup>
 import MeetupsHeader from './components/MeetupsHeader.vue'
 import MeetupsFooter from './components/MeetupsFooter.vue'
-import PageMeetups from './components/PageMeetups.vue'
-import PageUser from './components/PageUser.vue'
 </script>
 
 <template>
   <div class="wrapper">
     <MeetupsHeader />
     <main class="main">
-      <PageMeetups />
+      <RouterView />
     </main>
     <MeetupsFooter />
   </div>

@@ -1,12 +1,15 @@
 <script setup>
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 </script>
 
 <template>
   <nav class="nav">
-    <a href="/meetups" class="nav__link">&larr; Вернуться к списку</a>
-    <a href="/login" class="nav__link">Вход</a>
-    <a href="/meetups/create" class="nav__link">Создать митап</a>
-    <a href="/user" class="nav__link">Demo Organizer</a>
+    <RouterLink v-if="route.meta.showReturnToMeetups" :to="{ name: 'meetups' }" class="nav__link">&larr; Вернуться к списку</RouterLink>
+    <RouterLink to="/login" class="nav__link">Вход</RouterLink>
+    <RouterLink to="/meetups/create" class="nav__link">Создать митап</RouterLink>
+    <RouterLink :to="{ name: 'user' }" class="nav__link">Demo Organizer</RouterLink>
   </nav>
 </template>
 

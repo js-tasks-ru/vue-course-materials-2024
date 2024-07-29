@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { UiContainer, UiAlert, UiRadioGroup } from '@shgk/vue-course-ui'
-import UiButtonGroup from './UiButtonGroup.vue'
-import MeetupsList from './MeetupsList.vue'
-import MeetupsCalendar from './MeetupsCalendar.vue'
+import UiButtonGroup from '../components/UiButtonGroup.vue'
+import MeetupsList from '../components/MeetupsList.vue'
+import MeetupsCalendar from '../components/MeetupsCalendar.vue'
 import type { Ref } from 'vue'
 import type { MeetupDTO } from '../types/meetups.types.ts'
 import { fetchMeetups } from '../api.ts'
