@@ -35,9 +35,9 @@ function updateCurrentPath() {
     <header class="header">
       <h1 class="logo">App</h1>
       <nav class="nav">
-        <a href="/A" @click.prevent="push('/A')" class="nav__link">Page A</a>
-        <a href="/B" @click.prevent="push('/B')" class="nav__link">Page B</a>
-        <a href="/C" @click.prevent="push('/C')" class="nav__link">Page C</a>
+        <a :href="`${BASE_URL}/A`" @click.exact.prevent="push('/A')" class="nav__link">Page A</a>
+        <a :href="`${BASE_URL}/B`" @click.exact.prevent="push('/B')" class="nav__link">Page B</a>
+        <a :href="`${BASE_URL}/C`" @click.exact.prevent="push('/C')" class="nav__link">Page C</a>
       </nav>
     </header>
 
