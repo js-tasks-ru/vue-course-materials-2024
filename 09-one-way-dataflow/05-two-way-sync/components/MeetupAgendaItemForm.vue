@@ -1,6 +1,7 @@
 <script setup>
-import { UiIcon, UiInput, UiFormGroup, UiButton } from '@shgk/vue-course-ui'
+import { UiIcon, UiInput, UiFormGroup } from '@shgk/vue-course-ui'
 import { ref, watch } from 'vue'
+import { dequal } from 'dequal'
 
 const props = defineProps({
   agendaItem: {
@@ -12,6 +13,13 @@ const props = defineProps({
 const emit = defineEmits(['update:agendaItem', 'remove'])
 
 const localAgendaItem = ref({ ...props.agendaItem })
+
+watch(() => props.agendaItem, () => {
+  if (dequal(props.agendaItem, localAgendaItem.value)) {
+    return
+  }
+  localAgendaItem.value = { ...props.agendaItem }
+}, { deep: true })
 
 watch(localAgendaItem, () => {
   emit('update:agendaItem', { ...localAgendaItem.value })

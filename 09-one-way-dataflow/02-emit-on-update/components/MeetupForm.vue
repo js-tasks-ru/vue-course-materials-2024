@@ -10,13 +10,29 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['update:meetup'])
+
+function update(prop, value) {
+  emit('update:meetup', {
+    ...props.meetup,
+    [prop]: value,
+  })
+}
+
 function addAgendaItem() {
   const newItem = createAgendaItem()
-  props.meetup.agenda.push(newItem)
+  update('agenda', [...props.meetup.agenda, newItem])
+
+}
+
+function updateAgendaItem(index, value) {
+  const newAgenda = [...props.meetup.agenda]
+  newAgenda[index] = value
+  update('agenda', newAgenda)
 }
 
 function removeAgendaItem(index) {
-  props.meetup.agenda.splice(index, 1)
+  update('agenda', props.meetup.agenda.filter((_, i) => i !== index))
 }
 </script>
 
@@ -25,10 +41,10 @@ function removeAgendaItem(index) {
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <UiFormGroup label="Название">
-          <UiInput v-model="meetup.title" />
+          <UiInput :model-value="meetup.title" @update:model-value="update('title', $event)" />
         </UiFormGroup>
         <UiFormGroup label="Место проведения">
-          <UiInput v-model="meetup.place" />
+          <UiInput :model-value="meetup.place" @update:model-value="update('place', $event)" />
         </UiFormGroup>
       </fieldset>
 
@@ -36,8 +52,9 @@ function removeAgendaItem(index) {
       <MeetupAgendaItemForm
         v-for="(agendaItem, index) in meetup.agenda"
         :key="agendaItem.id"
-        :agenda-item="agendaItem"
         class="meetup-form__agenda-item"
+        :agenda-item="agendaItem"
+        @update:agenda-item="updateAgendaItem(index, $event)"
         @remove="removeAgendaItem(index)"
       />
 

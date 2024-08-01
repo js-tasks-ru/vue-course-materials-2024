@@ -10,29 +10,30 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:meetup'])
+const emit = defineEmits(['updateMeetupField', 'addAgendaItem', 'removeAgendaItem', 'updateAgendaItemField'])
 
-function update(prop, value) {
-  emit('update:meetup', {
-    ...props.meetup,
-    [prop]: value,
+function update(field, value) {
+  emit('updateMeetupField', {
+    field,
+    value,
   })
 }
 
 function addAgendaItem() {
   const newItem = createAgendaItem()
-  update('agenda', [...props.meetup.agenda, newItem])
-
+  emit('addAgendaItem', newItem)
 }
 
-function updateAgendaItem(index, value) {
-  const newAgenda = [...props.meetup.agenda]
-  newAgenda[index] = value
-  update('agenda', newAgenda)
+function updateAgendaItemField(index, field, value) {
+  emit('updateAgendaItemField', {
+    index,
+    field,
+    value,
+  })
 }
 
 function removeAgendaItem(index) {
-  update('agenda', props.meetup.agenda.filter((_, i) => i !== index))
+  emit('removeAgendaItem', index)
 }
 </script>
 
@@ -54,7 +55,7 @@ function removeAgendaItem(index) {
         :key="agendaItem.id"
         class="meetup-form__agenda-item"
         :agenda-item="agendaItem"
-        @update:agenda-item="updateAgendaItem(index, $event)"
+        @update-field="updateAgendaItemField(index, $event.field, $event.value)"
         @remove="removeAgendaItem(index)"
       />
 

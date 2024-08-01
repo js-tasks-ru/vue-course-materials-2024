@@ -1,6 +1,6 @@
 <script setup>
-import { UiIcon, UiInput, UiFormGroup, UiButton } from '@shgk/vue-course-ui'
-import { ref } from 'vue'
+import { UiIcon, UiInput, UiFormGroup } from '@shgk/vue-course-ui'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   agendaItem: {
@@ -13,9 +13,9 @@ const emit = defineEmits(['update:agendaItem', 'remove'])
 
 const localAgendaItem = ref({ ...props.agendaItem })
 
-function handleSave() {
+watch(localAgendaItem, () => {
   emit('update:agendaItem', { ...localAgendaItem.value })
-}
+}, { deep: true })
 </script>
 
 <template>
@@ -49,10 +49,6 @@ function handleSave() {
 
     <UiFormGroup label="Описание">
       <UiInput v-model="localAgendaItem.description" multiline />
-    </UiFormGroup>
-
-    <UiFormGroup>
-      <UiButton @click="handleSave">Save</UiButton>
     </UiFormGroup>
   </div>
 </template>

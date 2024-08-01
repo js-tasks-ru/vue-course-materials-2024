@@ -11,7 +11,7 @@ const meetup = ref(createMeetup())
   <div class="wrapper">
     <main class="main">
       <UiContainer>
-        <MeetupForm />
+        <MeetupForm :meetup="meetup" />
       </UiContainer>
     </main>
   </div>

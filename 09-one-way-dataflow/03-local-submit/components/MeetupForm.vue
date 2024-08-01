@@ -1,7 +1,9 @@
 <script setup>
+import { ref } from 'vue'
 import { UiInput, UiButton, UiFormGroup } from '@shgk/vue-course-ui'
 import MeetupAgendaItemForm from './MeetupAgendaItemForm.vue'
 import { createAgendaItem } from '../services/meetups.service.ts'
+import { klona } from 'klona'
 
 const props = defineProps({
   meetup: {
@@ -10,33 +12,41 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['submit'])
+
+const localMeetup = ref(klona(props.meetup))
+
 function addAgendaItem() {
   const newItem = createAgendaItem()
-  props.meetup.agenda.push(newItem)
+  localMeetup.value.agenda.push(newItem)
 }
 
 function removeAgendaItem(index) {
-  props.meetup.agenda.splice(index, 1)
+  localMeetup.value.agenda.splice(index, 1)
+}
+
+function handleSubmit() {
+  emit('submit', klona(localMeetup.value))
 }
 </script>
 
 <template>
-  <form class="meetup-form">
+  <form class="meetup-form" @submit.prevent="handleSubmit">
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <UiFormGroup label="Название">
-          <UiInput v-model="meetup.title" />
+          <UiInput v-model="localMeetup.title" />
         </UiFormGroup>
         <UiFormGroup label="Место проведения">
-          <UiInput v-model="meetup.place" />
+          <UiInput v-model="localMeetup.place" />
         </UiFormGroup>
       </fieldset>
 
       <h3 class="meetup-form__agenda-title">Программа</h3>
       <MeetupAgendaItemForm
-        v-for="(agendaItem, index) in meetup.agenda"
+        v-for="(agendaItem, index) in localMeetup.agenda"
         :key="agendaItem.id"
-        :agenda-item="agendaItem"
+        v-model:agenda-item="localMeetup.agenda[index]"
         class="meetup-form__agenda-item"
         @remove="removeAgendaItem(index)"
       />

@@ -2,6 +2,22 @@
 import { UiInput, UiButton, UiFormGroup } from '@shgk/vue-course-ui'
 import MeetupAgendaItemForm from './MeetupAgendaItemForm.vue'
 import { createAgendaItem } from '../services/meetups.service.ts'
+
+const props = defineProps({
+  meetup: {
+    type: Object,
+    required: true,
+  },
+})
+
+function addAgendaItem() {
+  const newItem = createAgendaItem()
+  props.meetup.agenda.push(newItem)
+}
+
+function removeAgendaItem(index) {
+  props.meetup.agenda.splice(index, 1)
+}
 </script>
 
 <template>
@@ -9,18 +25,24 @@ import { createAgendaItem } from '../services/meetups.service.ts'
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <UiFormGroup label="Название">
-          <UiInput />
+          <UiInput v-model="meetup.title" />
         </UiFormGroup>
         <UiFormGroup label="Место проведения">
-          <UiInput />
+          <UiInput v-model="meetup.place" />
         </UiFormGroup>
       </fieldset>
 
       <h3 class="meetup-form__agenda-title">Программа</h3>
-      <MeetupAgendaItemForm class="meetup-form__agenda-item" />
+      <MeetupAgendaItemForm
+        v-for="(agendaItem, index) in meetup.agenda"
+        :key="agendaItem.id"
+        :agenda-item="agendaItem"
+        class="meetup-form__agenda-item"
+        @remove="removeAgendaItem(index)"
+      />
 
       <div class="meetup-form__append">
-        <UiButton class="meetup-form__append-button"> + Добавить пункт программы</UiButton>
+        <UiButton class="meetup-form__append-button" @click="addAgendaItem"> + Добавить пункт программы </UiButton>
       </div>
     </div>
 

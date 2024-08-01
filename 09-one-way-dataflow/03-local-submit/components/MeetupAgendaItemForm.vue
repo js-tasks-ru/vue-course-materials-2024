@@ -1,5 +1,6 @@
 <script setup>
-import { UiIcon, UiInput, UiFormGroup } from '@shgk/vue-course-ui'
+import { UiIcon, UiInput, UiFormGroup, UiButton } from '@shgk/vue-course-ui'
+import { ref } from 'vue'
 
 const props = defineProps({
   agendaItem: {
@@ -8,7 +9,13 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['remove'])
+const emit = defineEmits(['update:agendaItem', 'remove'])
+
+const localAgendaItem = ref({ ...props.agendaItem })
+
+function handleSave() {
+  emit('update:agendaItem', { ...localAgendaItem.value })
+}
 </script>
 
 <template>
@@ -18,7 +25,7 @@ const emit = defineEmits(['remove'])
     </button>
 
     <UiFormGroup label="Тип">
-      <select v-model="agendaItem.type" title="Тип">
+      <select v-model="localAgendaItem.type" title="Тип">
         <option value="other">Другое</option>
       </select>
     </UiFormGroup>
@@ -26,22 +33,26 @@ const emit = defineEmits(['remove'])
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <UiFormGroup label="Начало">
-          <UiInput v-model="agendaItem.startsAt" type="time" placeholder="00:00" />
+          <UiInput v-model="localAgendaItem.startsAt" type="time" placeholder="00:00" />
         </UiFormGroup>
       </div>
       <div class="agenda-item-form__col">
         <UiFormGroup label="Окончание">
-          <UiInput v-model="agendaItem.endsAt" type="time" placeholder="00:00" />
+          <UiInput v-model="localAgendaItem.endsAt" type="time" placeholder="00:00" />
         </UiFormGroup>
       </div>
     </div>
 
     <UiFormGroup label="Заголовок">
-      <UiInput v-model="agendaItem.title" />
+      <UiInput v-model="localAgendaItem.title" />
     </UiFormGroup>
 
     <UiFormGroup label="Описание">
-      <UiInput v-model="agendaItem.description" multiline />
+      <UiInput v-model="localAgendaItem.description" multiline />
+    </UiFormGroup>
+
+    <UiFormGroup>
+      <UiButton @click="handleSave">Save</UiButton>
     </UiFormGroup>
   </div>
 </template>

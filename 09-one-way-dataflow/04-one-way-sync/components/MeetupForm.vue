@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { UiInput, UiButton, UiFormGroup } from '@shgk/vue-course-ui'
 import MeetupAgendaItemForm from './MeetupAgendaItemForm.vue'
 import { createAgendaItem } from '../services/meetups.service.ts'
@@ -12,9 +12,13 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['submit'])
+const emit = defineEmits(['update:meetup'])
 
 const localMeetup = ref(klona(props.meetup))
+
+watch(localMeetup, () => {
+  emit('update:meetup', klona(localMeetup.value))
+}, { deep: true })
 
 function addAgendaItem() {
   const newItem = createAgendaItem()
@@ -24,14 +28,10 @@ function addAgendaItem() {
 function removeAgendaItem(index) {
   localMeetup.value.agenda.splice(index, 1)
 }
-
-function handleSubmit() {
-  emit('submit', klona(localMeetup.value))
-}
 </script>
 
 <template>
-  <form class="meetup-form" @submit.prevent="handleSubmit">
+  <form class="meetup-form">
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <UiFormGroup label="Название">

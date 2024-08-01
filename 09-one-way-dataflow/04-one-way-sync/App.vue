@@ -11,7 +11,7 @@ const meetup = ref(createMeetup())
   <div class="wrapper">
     <main class="main">
       <UiContainer>
-        <MeetupForm :meetup="meetup" @submit="meetup = $event" />
+        <MeetupForm v-model:meetup="meetup" />
       </UiContainer>
     </main>
   </div>

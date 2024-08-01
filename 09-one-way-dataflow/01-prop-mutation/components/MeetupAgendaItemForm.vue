@@ -1,15 +1,24 @@
 <script setup>
 import { UiIcon, UiInput, UiFormGroup } from '@shgk/vue-course-ui'
+
+const props = defineProps({
+  agendaItem: {
+    type: Object,
+    required: true,
+  },
+})
+
+const emit = defineEmits(['remove'])
 </script>
 
 <template>
   <div class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click="emit('remove')">
       <UiIcon icon="trash" />
     </button>
 
     <UiFormGroup label="Тип">
-      <select title="Тип">
+      <select v-model="agendaItem.type" title="Тип">
         <option value="other">Другое</option>
       </select>
     </UiFormGroup>
@@ -17,22 +26,22 @@ import { UiIcon, UiInput, UiFormGroup } from '@shgk/vue-course-ui'
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <UiFormGroup label="Начало">
-          <UiInput type="time" placeholder="00:00" />
+          <UiInput v-model="agendaItem.startsAt" type="time" placeholder="00:00" />
         </UiFormGroup>
       </div>
       <div class="agenda-item-form__col">
         <UiFormGroup label="Окончание">
-          <UiInput type="time" placeholder="00:00" />
+          <UiInput v-model="agendaItem.endsAt" type="time" placeholder="00:00" />
         </UiFormGroup>
       </div>
     </div>
 
     <UiFormGroup label="Заголовок">
-      <UiInput />
+      <UiInput v-model="agendaItem.title" />
     </UiFormGroup>
 
     <UiFormGroup label="Описание">
-      <UiInput multiline />
+      <UiInput v-model="agendaItem.description" multiline />
     </UiFormGroup>
   </div>
 </template>

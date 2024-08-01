@@ -8,12 +8,12 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:agendaItem', 'remove'])
+const emit = defineEmits(['updateField', 'remove'])
 
 function update(prop, value) {
-  emit('update:agendaItem', {
-    ...props.agendaItem,
-    [prop]: value,
+  emit('updateField', {
+    field: prop,
+    value,
   })
 }
 </script>
