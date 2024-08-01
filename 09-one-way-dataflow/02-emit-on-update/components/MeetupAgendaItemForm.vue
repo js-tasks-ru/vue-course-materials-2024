@@ -8,7 +8,14 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['remove'])
+const emit = defineEmits(['update:agendaItem', 'remove'])
+
+function update(prop, value) {
+  emit('update:agendaItem', {
+    ...props.agendaItem,
+    [prop]: value,
+  })
+}
 </script>
 
 <template>
@@ -18,7 +25,7 @@ const emit = defineEmits(['remove'])
     </button>
 
     <UiFormGroup label="Тип">
-      <select v-model="agendaItem.type" title="Тип">
+      <select :value="agendaItem.type" @change="update('type', $event.target.value)" title="Тип">
         <option value="other">Другое</option>
       </select>
     </UiFormGroup>
@@ -26,22 +33,22 @@ const emit = defineEmits(['remove'])
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <UiFormGroup label="Начало">
-          <UiInput v-model="agendaItem.startsAt" type="time" placeholder="00:00" />
+          <UiInput :model-value="agendaItem.startsAt" type="time" placeholder="00:00" @update:model-value="update('startsAt', $event)" />
         </UiFormGroup>
       </div>
       <div class="agenda-item-form__col">
         <UiFormGroup label="Окончание">
-          <UiInput v-model="agendaItem.endsAt" type="time" placeholder="00:00" />
+          <UiInput :model-value="agendaItem.endsAt" type="time" placeholder="00:00" @update:model-value="update('endsAt', $event)" />
         </UiFormGroup>
       </div>
     </div>
 
     <UiFormGroup label="Заголовок">
-      <UiInput v-model="agendaItem.title" />
+      <UiInput :model-value="agendaItem.title" @update:model-value="update('title', $event)" />
     </UiFormGroup>
 
     <UiFormGroup label="Описание">
-      <UiInput v-model="agendaItem.description" multiline />
+      <UiInput :model-value="agendaItem.description" multiline @update:model-value="update('description', $event)" />
     </UiFormGroup>
   </div>
 </template>

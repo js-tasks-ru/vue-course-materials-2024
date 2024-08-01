@@ -4,6 +4,7 @@ import { UiInput, UiButton, UiFormGroup } from '@shgk/vue-course-ui'
 import MeetupAgendaItemForm from './MeetupAgendaItemForm.vue'
 import { createAgendaItem } from '../services/meetups.service.ts'
 import { klona } from 'klona'
+import { dequal } from 'dequal'
 
 const props = defineProps({
   meetup: {
@@ -15,6 +16,13 @@ const props = defineProps({
 const emit = defineEmits(['update:meetup'])
 
 const localMeetup = ref(klona(props.meetup))
+
+watch(() => props.meetup, () => {
+  if (dequal(props.meetup, localMeetup.value)) {
+    return
+  }
+  localMeetup.value = klona(props.meetup)
+}, { deep: true })
 
 watch(localMeetup, () => {
   emit('update:meetup', klona(localMeetup.value))

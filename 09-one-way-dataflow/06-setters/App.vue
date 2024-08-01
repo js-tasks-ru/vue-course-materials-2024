@@ -11,7 +11,13 @@ const meetup = ref(createMeetup())
   <div class="wrapper">
     <main class="main">
       <UiContainer>
-        <MeetupForm v-model:meetup="meetup" />
+        <MeetupForm
+          :meetup="meetup"
+          @update-meetup-field="meetup[$event.field] = $event.value"
+          @add-agenda-item="meetup.agenda.push($event)"
+          @remove-agenda-item="meetup.agenda.splice($event, 1)"
+          @update-agenda-item-field="meetup.agenda[$event.index][$event.field] = $event.value"
+        />
       </UiContainer>
     </main>
   </div>
