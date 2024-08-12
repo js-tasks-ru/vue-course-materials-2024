@@ -2,6 +2,7 @@
 import { computed, toRef } from 'vue'
 import { UiCard, UiBadge, UiIcon } from '@shgk/vue-course-ui'
 import type { MeetupDTO } from '../types/meetups.types.ts'
+import { formatAsIsoDate, formatAsLocalDate } from '../utils/dateFormatters.ts'
 
 const props = defineProps<{
   meetup: MeetupDTO,
@@ -9,15 +10,9 @@ const props = defineProps<{
 
 const meetup = toRef(() => props.meetup)
 
-const isoDate = computed(() => new Date(meetup.value.date).toISOString())
+const isoDate = computed(() => formatAsIsoDate(meetup.value.date))
 
-const localDate = computed(() =>
-  new Date(meetup.value.date).toLocaleString(navigator.language, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }),
-)
+const localDate = computed(() => formatAsLocalDate(meetup.value.date))
 </script>
 
 <template>

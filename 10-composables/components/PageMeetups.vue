@@ -56,6 +56,17 @@ onMounted(async () => {
     console.error(error)
   }
 })
+
+// Называем переменную ref также, как template ref (атрибут ref в шаблоне)
+// В его значении будет находиться ссылка на DOM элемент
+const inputElement = ref<HTMLInputElement | null>(null)
+// Vue 3.5+ - новый API - useTemplateRef
+// Переменную можно назвать, как угодно
+// const inputElement = useTemplateRef<HTMLInputElement>('inputElement')
+
+function focusInput() {
+  inputElement.value?.focus()
+}
 </script>
 
 <template>
@@ -86,6 +97,7 @@ onMounted(async () => {
               </svg>
             </div>
             <input
+              ref="inputElement"
               class="form-control form-control--rounded form-control--sm"
               aria-label="Поиск"
               placeholder="Поиск"
@@ -101,7 +113,7 @@ onMounted(async () => {
 
       <div class="filters-panel__col">
         <div class="form-group form-group--inline">
-          <UiButton>Focus</UiButton>
+          <UiButton @click="focusInput">Focus</UiButton>
         </div>
       </div>
     </div>
