@@ -2,10 +2,13 @@
 import { computed, toRef } from 'vue'
 import { UiCard, UiBadge, UiIcon } from '@shgk/vue-course-ui'
 import type { MeetupDTO } from '../types/meetups.types.ts'
+import { useWindowSizeShared } from '../composables/useWindowSizeShared.ts'
 
 const props = defineProps<{
-  meetup: MeetupDTO,
+  meetup: MeetupDTO
 }>()
+
+const { width, height } = useWindowSizeShared()
 
 const meetup = toRef(() => props.meetup)
 
@@ -30,6 +33,8 @@ const localDate = computed(() =>
 
     <UiBadge v-if="meetup.organizing" kind="success" class="meetup-card__badge">Организую</UiBadge>
     <UiBadge v-if="meetup.attending" kind="primary" class="meetup-card__badge">Участвую</UiBadge>
+
+    <p>Window size is: {{ width }}x{{ height }}</p>
 
     <ul class="meetup-info">
       <li class="meetup-info__item">

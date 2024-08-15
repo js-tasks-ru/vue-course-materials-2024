@@ -36,7 +36,7 @@ export type MeetupAgendaItemDTO = {
 
 export type MeetupDTO = {
   /** ID митапа */
-  id: string
+  id: number
 
   /** Название митапа */
   title: string

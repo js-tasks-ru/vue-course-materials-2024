@@ -1,23 +1,29 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+// import { useAuth } from '../composables/useAuth.ts'
+import { useAuthStore } from '../stores/auth.ts'
 
 const route = useRoute()
 
-const isAuthenticated = ref(false)
+// Потеря реактивности от деструктуризации
+// const { isAuthenticated, user } = useAuthStore()
+
+const authStore = useAuthStore()
+const { isAuthenticated, user } = storeToRefs(authStore)
 </script>
 
 <template>
   <nav class="nav">
     <RouterLink v-if="route.meta.showReturnToMeetups" :to="{ name: 'meetups' }" class="nav__link"
-      >&larr; Вернуться к списку</RouterLink
-    >
+      >&larr; Вернуться к списку
+    </RouterLink>
     <template v-if="!isAuthenticated">
       <RouterLink :to="{ name: 'login' }" class="nav__link">Вход</RouterLink>
       <RouterLink to="/meetups/create" class="nav__link">Создать митап</RouterLink>
     </template>
     <template v-else>
-      <RouterLink :to="{ name: 'user' }" class="nav__link">Demo Organizer</RouterLink>
+      <RouterLink :to="{ name: 'user' }" class="nav__link">{{ user.fullname }}</RouterLink>
     </template>
   </nav>
 </template>

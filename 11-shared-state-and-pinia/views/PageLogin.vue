@@ -1,11 +1,26 @@
 <script setup>
 import { UiFormGroup, UiInput, UiButton } from '@shgk/vue-course-ui'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { login } from '../api.ts'
+// import { useAuth } from '../composables/useAuth.ts'
+import { useAuthStore } from '../stores/auth.ts'
 
 const email = ref('demo@email')
 const password = ref('password')
 
-function handleSubmit() {}
+const { setUser } = useAuthStore()
+const router = useRouter()
+
+async function handleSubmit() {
+  try {
+    const user = await login(email.value, password.value)
+    setUser(user)
+    await router.push({ name: 'index' })
+  } catch (error) {
+    alert(error.message)
+  }
+}
 </script>
 
 <template>
@@ -39,7 +54,6 @@ function handleSubmit() {}
 .page-auth__title {
   text-align: center;
 }
-
 
 .form {
   margin: 0;
