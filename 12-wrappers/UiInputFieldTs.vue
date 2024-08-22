@@ -1,25 +1,31 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import UiInput from './UiInput.vue'
+import type { UiInputSlots } from './UiInputTs.vue'
+
+interface UiInputFieldSelfSlots {
+  label?(): void
+}
+
+export interface UiInputFieldSlots extends UiInputSlots, UiInputFieldSelfSlots {}
+
 
 defineOptions({
   inheritAttrs: false,
 })
 
-defineProps({
-  label: {
-    type: String,
-  },
-})
+defineProps<{
+  label?: string
+}>()
 
-const slots = defineSlots()
+const slots = defineSlots<UiInputFieldSlots>()
 
 function getProxiedSlots() {
   const selfSlots = ['label']
-  return Object.keys(slots).filter((slotName) => !selfSlots.includes(slotName))
+  return Object.keys(slots).filter(slotName => !selfSlots.includes(slotName))
 }
 
-const uiInputInstance = ref(null)
+const uiInputInstance = ref<HTMLInputElement | null>(null)
 
 function focus() {
   uiInputInstance.value?.focus()
@@ -38,7 +44,7 @@ defineExpose({
       </span>
       <UiInput v-bind="$attrs" ref="uiInputInstance">
         <template v-for="slotName in getProxiedSlots()" #[slotName]>
-          <slot :name="slotName" />
+          <slot :name="slotName as keyof UiInputSlots" />
         </template>
       </UiInput>
     </label>

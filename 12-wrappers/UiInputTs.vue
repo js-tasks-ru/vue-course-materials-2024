@@ -1,30 +1,36 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { InputHTMLAttributes } from 'vue'
+
+type ClassPropType = string | object | ClassPropType[]
+
+// Это не совсем официальная фича
+// Но мы можем добавить @vue-ignore, чтобы в типах был интерфейс атрибутов, а в настоящем описании - не было
+export interface UiInputProps extends /* @vue-ignore */ InputHTMLAttributes {
+  modelValue: string
+  rounded?: boolean
+  class?: ClassPropType
+  inputClasses?: ClassPropType
+}
+
+export type UiInputEmits = {
+  'update:modelValue': [value: string]
+}
+
+export interface UiInputSlots {
+  'left-icon'?: void
+}
 
 defineOptions({
   inheritAttrs: false,
 })
-const props = defineProps({
-  modelValue: {
-    type: String,
-    required: true,
-  },
-  rounded: {
-    type: Boolean,
-    default: false,
-  },
-  class: {
-    type: [String, Object, Array],
-  },
-  inputClasses: {
-    type: [String, Object, Array],
-  },
-})
-const emit = defineEmits(['update:modelValue'])
-const slots = defineSlots()
-const model = defineModel()
 
-const inputElement = ref(null)
+const props = defineProps<UiInputProps>()
+const emit = defineEmits<UiInputEmits>()
+const slots = defineSlots<UiInputSlots>()
+const model = defineModel<UiInputProps['modelValue']>()
+
+const inputElement = ref<HTMLInputElement | null>(null)
 
 function focus() {
   inputElement.value?.focus()
@@ -41,23 +47,30 @@ defineExpose({
 
 <template>
   <div
-      class="input-group"
-      :class="[$props.class, {
-      'input-group--icon': hasLeftIcon(),
-      'input-group--icon-left': hasLeftIcon(),
-    }]"
+    class="input-group"
+    :class="[
+      $props.class,
+      {
+        'input-group--icon': hasLeftIcon(),
+        'input-group--icon-left': hasLeftIcon(),
+      },
+    ]"
   >
     <div v-if="slots['left-icon']" class="input-group__icon">
       <slot name="left-icon" />
     </div>
 
-    <input ref="inputElement"
-           class="form-control"
-           :class="[inputClasses, {
-        'form-control--rounded': rounded,
-      }]"
-           v-bind="$attrs"
-           v-model="model"
+    <input
+      ref="inputElement"
+      class="form-control"
+      :class="[
+        inputClasses,
+        {
+          'form-control--rounded': rounded,
+        },
+      ]"
+      v-bind="$attrs"
+      v-model="model"
     />
   </div>
 </template>
