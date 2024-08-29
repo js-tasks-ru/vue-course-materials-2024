@@ -1,6 +1,9 @@
 <script setup>
-</script>
+import { h } from 'vue'
 
-<template>
-  <div>TextDiv</div>
-</template>
+defineOptions({
+  render() {
+    return h('div', 'TextDiv')
+  },
+})
+</script>
