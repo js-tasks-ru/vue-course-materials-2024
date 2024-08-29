@@ -1,10 +1,14 @@
-<script>
-import { defineComponent, h } from 'vue'
+<script lang="jsx">
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'FieldsetComponent',
+
   render() {
-    return h('fieldset', [h('legend', this.$slots.legend()), this.$slots.default()])
+    return <fieldset>
+      <legend>{this.$slots.legend?.()}</legend>
+      {this.$slots.default?.()}
+    </fieldset>
   },
 })
 </script>

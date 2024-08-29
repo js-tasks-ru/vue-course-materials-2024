@@ -1,6 +1,4 @@
-<script>
-import { h } from 'vue'
-
+<script lang="jsx">
 export default {
   name: 'CounterButton',
 
@@ -11,11 +9,7 @@ export default {
   emits: ['update:count'],
 
   setup(props, { emit }) {
-    return () => {
-      return h('button', {
-        onClick: () => emit('update:count', props.count + 1),
-      }, props.count)
-    }
+    return () => <button onClick={() => emit('update:count', props.count + 1)}>{props.count}</button>
   },
 }
 </script>

@@ -1,9 +1,7 @@
-<script setup>
-import { h } from 'vue'
-
+<script setup lang="jsx">
 defineOptions({
   render() {
-    return h('div', 'TextDiv')
+    return <div>TextDiv</div>
   },
 })
 </script>
