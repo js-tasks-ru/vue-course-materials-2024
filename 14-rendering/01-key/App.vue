@@ -7,10 +7,13 @@ import SlowListItem from './SlowListItem.vue'
 import InputWithoutBinding from './InputWithoutBinding.vue'
 import ListItemWithCounterButton from './ListItemWithCounterButton.vue'
 
+let lastId = 0
+const genId = () => ++lastId
+
 const list = reactive([
-  { value: 'a' },
-  { value: 'b' },
-  { value: 'c' },
+  { id: genId(), value: 'a' },
+  { id: genId(), value: 'b' },
+  { id: genId(), value: 'c' },
 ])
 
 const key = ref('key')
@@ -25,27 +28,27 @@ function rotateList() {
     <div class="key-examples">
       <fieldset>
         <legend>No prop watch</legend>
-        <ListItem v-for="item in list" :item="item" />
+        <ListItem v-for="item in list" :key="item.id" :item="item" />
       </fieldset>
 
       <fieldset>
         <legend>No prop watch deep</legend>
-        <ListItemWithCounterButton v-for="item in list" :name="item.value" />
+        <ListItemWithCounterButton v-for="item in list" :key="item.id" :name="item.value" />
       </fieldset>
 
       <fieldset>
         <legend>DOM without binding (input without :value)</legend>
-        <InputWithoutBinding v-for="item in list" :text="item.value" />
+        <InputWithoutBinding v-for="item in list" :key="item.id" :text="item.value" />
       </fieldset>
 
       <fieldset>
         <legend>Complex update with DOM API (canvas)</legend>
-        <CanvasText v-for="item in list" :text="item.value" />
+        <CanvasText v-for="item in list" :key="item.id" :text="item.value" />
       </fieldset>
 
       <fieldset>
         <legend>Slow prop update</legend>
-        <SlowListItem v-for="item in list" :item="item" />
+        <SlowListItem v-for="item in list" :key="item.id" :item="item" />
       </fieldset>
     </div>
 
@@ -57,7 +60,7 @@ function rotateList() {
 
     <div>
       <input v-model="key" />
-      <CounterButton />
+      <CounterButton :key="key" />
     </div>
   </div>
 </template>
