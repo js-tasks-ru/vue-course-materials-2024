@@ -3,7 +3,7 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import type { Ref } from 'vue'
 import { UiButton, UiContainer, UiAlert, UiRadioGroup } from '@shgk/vue-course-ui'
 import UiButtonGroup from './UiButtonGroup.vue'
-import MeetupsList from './MeetupsList.vue'
+import MeetupsList from './MeetupsListVirtual.vue'
 import MeetupsCalendar from './MeetupsCalendar.vue'
 import { fetchMeetups } from '../api.ts'
 import type { MeetupDTO } from '../types/meetups.types.ts'
@@ -49,8 +49,20 @@ const dateFilterOptions = [
   { value: 'future', label: 'Ожидаемые' },
 ] as const
 
+function patchMeetups(oldMeetups: MeetupDTO[], newMeetups: MeetupDTO[]) {
+  for (let i = 0; i < newMeetups.length; i++) {
+    oldMeetups[i].title = newMeetups[i].title
+  }
+}
+
 async function refetchMeetups() {
   const newMeetups = await fetchMeetups()
+
+  // if (!meetups.value) {
+  //   meetups.value = newMeetups
+  // } else {
+  //   patchMeetups(meetups.value, newMeetups)
+  // }
 
   meetups.value = newMeetups
 
