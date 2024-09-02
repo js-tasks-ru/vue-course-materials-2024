@@ -1,39 +1,59 @@
-<script setup>
+<script lang="jsx">
 import { ref, watchEffect } from 'vue'
 import UiListViewItem from './UiListViewItem.vue'
 import UiListViewRemoveButton from './UiListViewRemoveButton.vue'
 
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
+export default {
+  props: {
+    items: {
+      type: Array,
+      required: true,
+    },
+
+    renderItem: {
+      type: Function,
+      default: ({ item, remove }) => (
+        <UiListViewItem>
+          <span>{item}</span>
+          <UiListViewRemoveButton onClick={() => remove()} />
+        </UiListViewItem>
+      ),
+    },
   },
-})
 
-const emit = defineEmits(['update:items'])
+  emits: ['update:items'],
 
-const localItems = ref([])
+  setup(props, { emit }) {
+    const localItems = ref([])
 
-watchEffect(() => {
-  localItems.value = [...props.items]
-})
+    watchEffect(() => {
+      localItems.value = [...props.items]
+    })
 
-function remove(index) {
-  localItems.value.splice(index, 1)
-  emit('update:items', localItems.value)
+    function remove(index) {
+      localItems.value.splice(index, 1)
+      emit('update:items', [...localItems.value])
+    }
+
+    return {
+      localItems,
+      remove,
+    }
+  },
+
+  render() {
+    return (
+      <ul class="list-view">
+        {this.localItems.map((item, index) => (
+          <li key={index} class="list-view__li">
+            {this.renderItem({ item, remove: () => this.remove(index) })}
+          </li>
+        ))}
+      </ul>
+    )
+  },
 }
 </script>
-
-<template>
-  <ul class="list-view">
-    <li v-for="(item, index) in localItems" class="list-view__li">
-      <UiListViewItem>
-        <span>{{ item }}</span>
-        <UiListViewRemoveButton @click="remove(index)" />
-      </UiListViewItem>
-    </li>
-  </ul>
-</template>
 
 <style scoped>
 .list-view__li {

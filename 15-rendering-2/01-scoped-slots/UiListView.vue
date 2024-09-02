@@ -1,36 +1,40 @@
-<script setup>
+<script setup lang="ts" generic="T extends unknown">
 import { ref, watchEffect } from 'vue'
+import type { Ref, VNode } from 'vue'
 import UiListViewItem from './UiListViewItem.vue'
 import UiListViewRemoveButton from './UiListViewRemoveButton.vue'
 
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
-  },
-})
+const props = defineProps<{
+  items: T[],
+}>()
 
 const emit = defineEmits(['update:items'])
 
-const localItems = ref([])
+defineSlots<{
+  default({ item, remove }: { item: T, remove: () => void }): VNode[]
+}>()
+
+const localItems: Ref<T[]> = ref([])
 
 watchEffect(() => {
   localItems.value = [...props.items]
 })
 
-function remove(index) {
+function remove(index: number) {
   localItems.value.splice(index, 1)
-  emit('update:items', localItems.value)
+  emit('update:items', [...localItems.value])
 }
 </script>
 
 <template>
   <ul class="list-view">
     <li v-for="(item, index) in localItems" class="list-view__li">
-      <UiListViewItem>
-        <span>{{ item }}</span>
-        <UiListViewRemoveButton @click="remove(index)" />
-      </UiListViewItem>
+      <slot :item="item" :remove="() => remove(index)">
+        <UiListViewItem>
+          <span>{{ item }}</span>
+          <UiListViewRemoveButton @click="remove(index)" />
+        </UiListViewItem>
+      </slot>
     </li>
   </ul>
 </template>
