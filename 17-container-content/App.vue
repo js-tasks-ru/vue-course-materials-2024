@@ -2,9 +2,13 @@
 import { ref } from 'vue'
 import { UiContainer } from '@shgk/vue-course-ui'
 import UiDivider from './UiDivider.vue'
+import UiDividerSlots from './UiDividerSlots.vue'
+import UiDividerJsx from './UiDividerJsx.vue'
 import UiAccordion from './UiAccordion.vue'
 import UiAccordion2 from './UiAccordion2.vue'
 import UiAccordionItem2 from './UiAccordionItem2.vue'
+import UiAccordion3 from './UiAccordion3.vue'
+import UiAccordionItem3 from './UiAccordionItem3.vue'
 
 const options = [
   {
@@ -44,6 +48,23 @@ const selected = ref()
             </template>
           </UiDivider>
 
+          <UiDividerSlots>
+            <template #block-1>
+              <p>Lorem ipsum 1</p>
+            </template>
+            <template #block-2>
+              <p>Lorem ipsum 2</p>
+            </template>
+            <template #block-3>
+              <p>Lorem ipsum 3</p>
+            </template>
+          </UiDividerSlots>
+
+          <UiDividerJsx>
+            <p>Lorem ipsum 1</p>
+            <p>Lorem ipsum 2</p>
+            <p>Lorem ipsum 3</p>
+          </UiDividerJsx>
 
           <UiAccordion v-model:selected="selected" :options />
 
@@ -59,6 +80,17 @@ const selected = ref()
             </UiAccordionItem2>
           </UiAccordion2>
 
+          <UiAccordion3 v-model:selected="selected">
+            <UiAccordionItem3 :title="options[0].title" :value="options[0].value">
+              {{ options[0].text }}
+            </UiAccordionItem3>
+            <UiAccordionItem3 :title="options[1].title" :value="options[1].value">
+              {{ options[1].text }}
+            </UiAccordionItem3>
+            <UiAccordionItem3 :title="options[2].title" :value="options[2].value">
+              {{ options[2].text }}
+            </UiAccordionItem3>
+          </UiAccordion3>
         </div>
       </UiContainer>
     </main>
