@@ -1,23 +1,20 @@
 <script setup>
-import { ref } from 'vue'
+import { provide } from 'vue'
 import { UiContainer } from '@shgk/vue-course-ui'
 import MeetupForm from './components/MeetupForm.vue'
-import { createMeetup } from './services/meetups.service.ts'
+import { useMeetupFormProvider } from './composables/useMeetupForm.ts'
 
-const meetup = ref(createMeetup())
+provide('config', { apiUrl: '/api' })
+
+const { meetup } = useMeetupFormProvider()
 </script>
 
 <template>
   <div class="wrapper">
     <main class="main">
       <UiContainer>
-        <MeetupForm
-          :meetup="meetup"
-          @update-meetup-field="meetup[$event.field] = $event.value"
-          @add-agenda-item="meetup.agenda.push($event)"
-          @remove-agenda-item="meetup.agenda.splice($event, 1)"
-          @update-agenda-item-field="meetup.agenda[$event.index][$event.field] = $event.value"
-        />
+        <MeetupForm />
+        <pre>{{ meetup }}</pre>
       </UiContainer>
     </main>
   </div>

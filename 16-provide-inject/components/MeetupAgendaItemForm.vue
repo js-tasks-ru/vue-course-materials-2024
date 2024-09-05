@@ -1,31 +1,30 @@
 <script setup>
+import { computed, inject } from 'vue'
 import { UiIcon, UiInput, UiFormGroup } from '@shgk/vue-course-ui'
+import { useMeetupFormContext } from '../composables/useMeetupForm.ts'
 
 const props = defineProps({
-  agendaItem: {
-    type: Object,
+  index: {
+    type: Number,
     required: true,
   },
 })
 
-const emit = defineEmits(['updateField', 'remove'])
+const config = inject('config')
 
-function update(prop, value) {
-  emit('updateField', {
-    field: prop,
-    value,
-  })
-}
+const { meetup, updateAgendaItemField, removeAgendaItem } = useMeetupFormContext()
+
+const agendaItem = computed(() => meetup.value.agenda[props.index])
 </script>
 
 <template>
   <div class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button" @click="emit('remove')">
+    <button type="button" class="agenda-item-form__remove-button" @click="removeAgendaItem(index)">
       <UiIcon icon="trash" />
     </button>
 
     <UiFormGroup label="Тип">
-      <select :value="agendaItem.type" @change="update('type', $event.target.value)" title="Тип">
+      <select :value="agendaItem.type" @change="updateAgendaItemField(index, 'type', $event.target.value)" title="Тип">
         <option value="other">Другое</option>
       </select>
     </UiFormGroup>
@@ -33,23 +32,25 @@ function update(prop, value) {
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <UiFormGroup label="Начало">
-          <UiInput :model-value="agendaItem.startsAt" type="time" placeholder="00:00" @update:model-value="update('startsAt', $event)" />
+          <UiInput :model-value="agendaItem.startsAt" type="time" placeholder="00:00" @update:model-value="updateAgendaItemField(index, 'startsAt', $event)" />
         </UiFormGroup>
       </div>
       <div class="agenda-item-form__col">
         <UiFormGroup label="Окончание">
-          <UiInput :model-value="agendaItem.endsAt" type="time" placeholder="00:00" @update:model-value="update('endsAt', $event)" />
+          <UiInput :model-value="agendaItem.endsAt" type="time" placeholder="00:00" @update:model-value="updateAgendaItemField(index, 'endsAt', $event)" />
         </UiFormGroup>
       </div>
     </div>
 
     <UiFormGroup label="Заголовок">
-      <UiInput :model-value="agendaItem.title" @update:model-value="update('title', $event)" />
+      <UiInput :model-value="agendaItem.title" @update:model-value="updateAgendaItemField(index, 'title', $event)" />
     </UiFormGroup>
 
     <UiFormGroup label="Описание">
-      <UiInput :model-value="agendaItem.description" multiline @update:model-value="update('description', $event)" />
+      <UiInput :model-value="agendaItem.description" multiline @update:model-value="updateAgendaItemField(index, 'description', $event)" />
     </UiFormGroup>
+
+    {{ config.apiUrl }}
   </div>
 </template>
 

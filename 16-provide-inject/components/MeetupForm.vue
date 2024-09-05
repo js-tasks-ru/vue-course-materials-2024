@@ -1,40 +1,12 @@
 <script setup>
 import { UiInput, UiButton, UiFormGroup } from '@shgk/vue-course-ui'
 import MeetupAgendaItemForm from './MeetupAgendaItemForm.vue'
-import { createAgendaItem } from '../services/meetups.service.ts'
+import { useMeetupFormContext } from '../composables/useMeetupForm.ts'
+import { provide } from 'vue'
 
-const props = defineProps({
-  meetup: {
-    type: Object,
-    required: true,
-  },
-})
+const { meetup, addAgendaItem, updateMeetupField } = useMeetupFormContext()
 
-const emit = defineEmits(['updateMeetupField', 'addAgendaItem', 'removeAgendaItem', 'updateAgendaItemField'])
-
-function update(field, value) {
-  emit('updateMeetupField', {
-    field,
-    value,
-  })
-}
-
-function addAgendaItem() {
-  const newItem = createAgendaItem()
-  emit('addAgendaItem', newItem)
-}
-
-function updateAgendaItemField(index, field, value) {
-  emit('updateAgendaItemField', {
-    index,
-    field,
-    value,
-  })
-}
-
-function removeAgendaItem(index) {
-  emit('removeAgendaItem', index)
-}
+provide('config', { apiUrl: '/api2' })
 </script>
 
 <template>
@@ -42,10 +14,10 @@ function removeAgendaItem(index) {
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <UiFormGroup label="Название">
-          <UiInput :model-value="meetup.title" @update:model-value="update('title', $event)" />
+          <UiInput :model-value="meetup.title" @update:model-value="updateMeetupField('title', $event)" />
         </UiFormGroup>
         <UiFormGroup label="Место проведения">
-          <UiInput :model-value="meetup.place" @update:model-value="update('place', $event)" />
+          <UiInput :model-value="meetup.place" @update:model-value="updateMeetupField('place', $event)" />
         </UiFormGroup>
       </fieldset>
 
@@ -54,9 +26,7 @@ function removeAgendaItem(index) {
         v-for="(agendaItem, index) in meetup.agenda"
         :key="agendaItem.id"
         class="meetup-form__agenda-item"
-        :agenda-item="agendaItem"
-        @update-field="updateAgendaItemField(index, $event.field, $event.value)"
-        @remove="removeAgendaItem(index)"
+        :index="index"
       />
 
       <div class="meetup-form__append">
