@@ -1,17 +1,14 @@
 <script setup>
 import { ref } from 'vue'
+import { vSelectOnFocus } from './selectOnFocus.js'
 
 const text = ref('Input Value')
-
-function handleFocus(event) {
-  event.target.setSelectionRange(0, -1)
-}
 </script>
 
 <template>
   <div class="wrapper">
     <main class="main">
-      <input v-model="text" @focus="handleFocus" />
+      <input v-model="text" v-select-on-focus="[3, 5]" />
     </main>
   </div>
 </template>
