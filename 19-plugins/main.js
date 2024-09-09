@@ -5,5 +5,8 @@ import '@shgk/vue-course-ui/meetups/assets/styles/_input-group.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
+import { createToaster } from './plugins/toaster.ts'
 
-createApp(App).mount('#app')
+const toaster = createToaster()
+
+createApp(App).use(toaster).mount('#app')

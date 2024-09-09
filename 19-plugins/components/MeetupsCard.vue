@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {computed, ref, toRef} from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { UiButton, UiCard, UiBadge, UiIcon } from '@shgk/vue-course-ui'
-import UiToaster from './UiToaster.vue'
 import type { MeetupDTO } from '../types/meetups.types.ts'
+import { useToaster } from '../plugins/toaster.ts'
 
 const props = defineProps<{
-  meetup: MeetupDTO,
+  meetup: MeetupDTO
 }>()
 
 const meetup = toRef(() => props.meetup)
@@ -20,10 +20,10 @@ const localDate = computed(() =>
   }),
 )
 
-const toaster = ref<InstanceType<typeof UiToaster> | null>(null)
+const toaster = useToaster()
 
 function toast() {
-  toaster.value?.toast('Toast message')
+  toaster.toast('Toast message')
 }
 </script>
 
@@ -53,9 +53,7 @@ function toast() {
       </li>
     </ul>
 
-    <UiButton @click.capture.stop="toast">Show toast!</UiButton>
-
-    <UiToaster ref="toaster" />
+    <UiButton @click="toast">Show toast!</UiButton>
   </UiCard>
 </template>
 
