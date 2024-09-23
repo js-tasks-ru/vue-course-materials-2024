@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UiInput > should match snapshot 1`] = `
+"<div data-v-a744b81a="" class="input-group">
+  <!--v-if--><input data-v-a744b81a="" class="form-control">
+</div>"
+`;
